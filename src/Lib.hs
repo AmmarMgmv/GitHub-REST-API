@@ -21,14 +21,27 @@ import           Network.HTTP.Client          (newManager)
 import           Network.HTTP.Client.TLS      (tlsManagerSettings)
 import           Data.Text                    hiding (map, intercalate)
 import           Data.List                    (intercalate)
+import           System.Environment           (getArgs)
+import           Servant.API                  (BasicAuthData (..))
+import           Data.ByteString.UTF8         (fromString)
 
 someFunc :: IO ()
 someFunc = do
   putStrLn "Let's try a GitHubCall"
+  --(rName:user:token:_) <- getArgs
+  --putStrLn $ "Name:  " ++ rName
+  --putStrLn $ "Account: " ++ user
+  --putStrLn $ "Token: " ++ token
+  --let auth = BasicAuthData (fromString user) (fromString token)
+  --testGitHubCall auth $ pack rName
+
   testGitHubCall "AmmarMgmv"
   putStrLn "End."
 
 
+--testGitHubCall :: BasicAuthData -> Text -> IO ()
+--testGitHubCall auth name =
+--(SC.runClientM (GH.getUser (Just "haskell-app") auth name) =<< env) >>= \case
 testGitHubCall :: Text -> IO ()
 testGitHubCall name = 
   (SC.runClientM (GH.getUser (Just "haskell-app") name) =<< env) >>= \case
