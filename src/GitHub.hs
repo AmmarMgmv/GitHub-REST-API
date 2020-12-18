@@ -16,9 +16,12 @@ import           Servant.API
 import           Servant.Client
 
 type GitHubAPI = "test" :> Get '[JSON] Text
+            :<|> "test2" :> Get '[JSON] Text
 
 gitHubAPI :: Proxy GitHubAPI
 gitHubAPI = Proxy
 
 test :: ClientM Text
-test = client gitHubAPI
+test2 :: ClientM Text
+
+test :<|> test2 = client gitHubAPI
