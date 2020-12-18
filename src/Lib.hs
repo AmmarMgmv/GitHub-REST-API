@@ -1,14 +1,15 @@
-{-# LANGUAGE DataKinds            #-}
-{-# LANGUAGE DeriveAnyClass       #-}
-{-# LANGUAGE DeriveGeneric        #-}
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE FlexibleInstances    #-}
-{-# LANGUAGE OverloadedStrings    #-}
-{-# LANGUAGE StandaloneDeriving   #-}
-{-# LANGUAGE TemplateHaskell      #-}
-{-# LANGUAGE TypeOperators        #-}
-{-# LANGUAGE TypeSynonymInstances #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE DataKinds              #-}
+{-# LANGUAGE DeriveAnyClass         #-}
+{-# LANGUAGE DeriveGeneric          #-}
+{-# LANGUAGE FlexibleContexts       #-}
+{-# LANGUAGE FlexibleInstances      #-}
+{-# LANGUAGE OverloadedStrings      #-}
+{-# LANGUAGE StandaloneDeriving     #-}
+{-# LANGUAGE TemplateHaskell        #-}
+{-# LANGUAGE TypeOperators          #-}
+{-# LANGUAGE TypeSynonymInstances   #-}
+{-# LANGUAGE LambdaCase             #-}
+{-# LANGUAGE DuplicateRecordFields  #-}
 
 module Lib
     ( someFunc
@@ -19,21 +20,31 @@ import qualified Servant.Client               as SC
 import           Network.HTTP.Client          (newManager)
 import           Network.HTTP.Client.TLS      (tlsManagerSettings)
 
+import           Data.Text                    hiding (map, intercalate)
+import           Data.List                    (intercalate)
+
 someFunc :: IO ()
 someFunc = do
   putStrLn "Let's try a GitHubCall"
-  testGitHubCall
+  testGitHubCall "esjmb"
   putStrLn "End."
 
 
-testGitHubCall :: IO ()
-testGitHubCall = 
-  (SC.runClientM (GH.test (Just "haskell-app") "esjmb") =<< env) >>= \case
+testGitHubCall :: Text -> IO ()
+testGitHubCall name = 
+  (SC.runClientM (GH.getUser (Just "haskell-app") name) =<< env) >>= \case
 
     Left err -> do
-      putStrLn $ "We have a problem: " ++ show err
+      putStrLn $ "Failure (User): " ++ show err
     Right res -> do
       putStrLn $ "Results are: " ++ show res
+
+      (SC.runClientM (GH.getUserRepos (Just "haskell-app") name) =<< env) >>= \case
+        Left err -> do
+          putStrLn $ "Failure (Repos): " ++ show err
+        Right res' -> do
+          putStrLn $ "The repos are: " ++
+            intercalate ", " (map (\(GH.GitHubRepo n _ _ ) -> unpack n) res')
 
 
   where env :: IO SC.ClientEnv
