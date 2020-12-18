@@ -15,13 +15,15 @@ import           Network.HTTP.Client (defaultManagerSettings, newManager)
 import           Servant.API
 import           Servant.Client
 
-type GitHubAPI = "test" :> Get '[JSON] Text
+type Username = Text
+
+type GitHubAPI = "users" :> Capture "username" Username :> Get '[JSON] Text
             :<|> "test2" :> Get '[JSON] Text
 
 gitHubAPI :: Proxy GitHubAPI
 gitHubAPI = Proxy
 
-test :: ClientM Text
+test :: Username -> ClientM Text
 test2 :: ClientM Text
 
 test :<|> test2 = client gitHubAPI
