@@ -19,7 +19,6 @@ import qualified GitHub                       as GH
 import qualified Servant.Client               as SC
 import           Network.HTTP.Client          (newManager)
 import           Network.HTTP.Client.TLS      (tlsManagerSettings)
-
 import           Data.Text                    hiding (map, intercalate)
 import           Data.List                    (intercalate)
 
@@ -44,10 +43,11 @@ testGitHubCall name =
           putStrLn $ "Failure (Repos): " ++ show err
         Right res' -> do
           putStrLn $ "The repos are: " ++
-            intercalate ", " (map (\(GH.GitHubRepo n _ _ ) -> unpack n) res')
+            intercalate ", " (map (\(GH.GitHubRepo n _ _  ) -> unpack n) res')
 
 
   where env :: IO SC.ClientEnv
         env = do
           manager <- newManager tlsManagerSettings
           return $ SC.mkClientEnv manager (SC.BaseUrl SC.Http "api.github.com" 80 "")
+
