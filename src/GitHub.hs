@@ -22,8 +22,9 @@ type UserAgent = Text
 
 data GitHubUser =
     GitHubUser { login :: Text
-               , name :: Text
-               , email :: Maybe Text
+               , followers :: Int
+               , following :: Int
+               , public_repos :: Int
                } deriving (Generic, FromJSON, Show)
 
 data GitHubRepo =

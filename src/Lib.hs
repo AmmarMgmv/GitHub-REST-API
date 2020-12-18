@@ -26,7 +26,7 @@ import           Data.List                    (intercalate)
 someFunc :: IO ()
 someFunc = do
   putStrLn "Let's try a GitHubCall"
-  testGitHubCall "esjmb"
+  testGitHubCall "AmmarMgmv"
   putStrLn "End."
 
 
